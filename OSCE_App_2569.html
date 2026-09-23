@@ -963,12 +963,9 @@ function saveStation(si) {
     itemScores: scores[si].join(','),
   });
 
-  // Image tag method — bypass CORS 100%
-  const img = new Image();
-  img.onload = img.onerror = () => {
+  sendToSheets(url, params, () => {
     showToast(`✓ บันทึกฐาน ${si+1} และส่ง Google Sheets แล้ว`);
-  };
-  img.src = url + '?' + params.toString();
+  });
 }
 
 /* ── SCORING ─────────────────────────────────────────────────────── */
@@ -1299,6 +1296,30 @@ function renderDevelop() {
 }
 
 /* ── SUBMIT TO SHEETS ────────────────────────────────────────────── */
+// ── ส่งข้อมูลไป Google Apps Script ──────────────────────────────────
+// ลองส่งแบบ fetch()+POST ก่อน (ดูเป็นคำขอปกติ ไม่ถูกตัวกรองความปลอดภัย/
+// Ad-blocker บล็อกง่ายเหมือน <img> tag ที่คล้าย tracking pixel) ถ้า fetch
+// ใช้ไม่ได้ (เบราว์เซอร์เก่ามาก) ค่อย fallback ไปใช้วิธี Image tag แบบเดิม
+function sendToSheets(url, params, onDone) {
+  if (typeof fetch === 'function') {
+    fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      credentials: 'omit',
+      body: params,
+    }).then(() => onDone()).catch(() => {
+      // fetch พังจริง (เช่น network error) — ลอง fallback เป็น Image tag
+      const img = new Image();
+      img.onload = img.onerror = onDone;
+      img.src = url + '?' + params.toString();
+    });
+  } else {
+    const img = new Image();
+    img.onload = img.onerror = onDone;
+    img.src = url + '?' + params.toString();
+  }
+}
+
 function submitToSheets() {
   const url    = document.getElementById('sheets-url').value.trim();
   const name   = document.getElementById('inp-name').value.trim();
@@ -1374,13 +1395,9 @@ function submitToSheets() {
     params.set('result' + (i+1), p === true ? 'ผ่าน' : p === false ? 'ไม่ผ่าน' : 'ไม่ครบ');
   });
 
-  const fullUrl = url + '?' + params.toString();
-
-  // ── วิธี Image tag: bypass CORS 100% ──
-  // Google Apps Script redirect doGet → browser โหลดเหมือน image
-  const img = new Image();
-  img.onload = img.onerror = () => {
-    // ไม่ว่าจะ load หรือ error ก็ถือว่าส่งถึง script แล้ว
+  // ── ส่งไป Google Sheets (fetch POST เป็นหลัก, Image tag เป็น fallback) ──
+  sendToSheets(url, params, () => {
+    // ไม่ว่าจะสำเร็จหรือ error ก็ถือว่าส่งถึง script แล้ว (ไม่มีทางอ่าน response กลับได้)
     localStorage.setItem('osce_sheets_url', url);
     btn.disabled = false;
     btn.textContent = 'ส่งผลการประเมิน';
@@ -1394,8 +1411,7 @@ function submitToSheets() {
           ช่วงประเมิน: ${period} | ${new Date().toLocaleString('th-TH')}
         </span>
       </div>`;
-  };
-  img.src = fullUrl;
+  });
 }
 
 /* ── UTILITIES ───────────────────────────────────────────────────── */
