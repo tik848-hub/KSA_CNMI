@@ -916,6 +916,12 @@ function saveStation(si) {
     return;
   }
 
+  const periodVal = document.getElementById('inp-period').value;
+  if (!periodVal) {
+    showToast('กรุณาเลือกช่วงการประเมิน (T0/T1/T2/T3) ก่อนบันทึกฐาน');
+    return;
+  }
+
   // Confirm ก่อนล็อก
   if (!confirm(
     `ยืนยันบันทึกและล็อกฐานที่ ${si+1}: ${STATIONS[si].name}?\n\n` +
@@ -941,9 +947,10 @@ function saveStation(si) {
   const params = new URLSearchParams({
     type:       'station',          // บอก Apps Script ว่าเป็นข้อมูลรายฐาน
     name, id, unit,
-    period:     document.getElementById('inp-period').value || 'ไม่ระบุ',
+    period:     periodVal,
     station:    si + 1,
     stationName: STATIONS[si].name,
+    stationShort: STATIONS[si].short,
     evaluator:  evaluators[si],
     comment:    comments[si] || '',
     score:      sc,
@@ -1357,9 +1364,10 @@ function submitToSheets() {
     critFails: getCritFails(),
     overallResult: overallResult(),
   });
-  evaluators.forEach((e, i) => params.set('ev' + (i+1), e || '—'));
-  comments.forEach((c, i)   => params.set('cm' + (i+1), c || ''));
+  evaluators.forEach((e, i) => { if (locked[i]) params.set('ev' + (i+1), e || ''); });
+  comments.forEach((c, i)   => { if (locked[i]) params.set('cm' + (i+1), c || ''); });
   STATIONS.forEach((s, i) => {
+    if (!locked[i]) return; // ส่งเฉพาะฐานที่บันทึกแล้ว — ไม่ทับฐานอื่นที่เคยบันทึกแยกไว้ก่อนหน้า
     params.set('score' + (i+1), stationScore(i));
     params.set('pct' + (i+1), Math.round(stationScore(i) / s.max * 100));
     const p = stationPassed(i);
