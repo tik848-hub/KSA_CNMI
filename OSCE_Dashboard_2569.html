@@ -55,12 +55,6 @@ body{font-family:'Sarabun',sans-serif;background:#F0F4F8;color:#1A1A2E;min-heigh
   color:#fff;transition:background .15s}
 .btn-icon:hover{background:rgba(255,255,255,.25)}
 
-/* ── PERIOD BUTTONS ── */
-.period-btn{padding:5px 12px;border:1.5px solid var(--border);border-radius:20px;
-  font-size:12px;font-weight:600;font-family:'Sarabun',sans-serif;
-  background:#fff;color:var(--gray);cursor:pointer;transition:all .15s}
-.period-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
-.period-btn:hover:not(.active){background:var(--ltGray);border-color:var(--mid)}
 
 /* ── TABS ── */
 .tab-row{display:flex;gap:4px;background:#fff;border-radius:var(--r);padding:5px;
@@ -206,29 +200,6 @@ body{font-family:'Sarabun',sans-serif;background:#F0F4F8;color:#1A1A2E;min-heigh
   </div>
 </div>
 
-<!-- PERIOD FILTER -->
-<div style="background:#fff;border-radius:var(--r);padding:10px 14px;margin-bottom:10px;
-  box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-  <span style="font-size:12px;font-weight:700;color:var(--navy)">📅 ช่วงเวลา:</span>
-  <div style="display:flex;gap:4px;flex-wrap:wrap">
-    <button class="period-btn active" id="pb-all"  onclick="setPeriod('all')">ทั้งหมด</button>
-    <button class="period-btn" id="pb-1m"   onclick="setPeriod('1m')">1 เดือน</button>
-    <button class="period-btn" id="pb-3m"   onclick="setPeriod('3m')">3 เดือน</button>
-    <button class="period-btn" id="pb-6m"   onclick="setPeriod('6m')">6 เดือน</button>
-    <button class="period-btn" id="pb-custom" onclick="setPeriod('custom')">กำหนดเอง</button>
-  </div>
-  <div id="custom-date-range" style="display:none;align-items:center;gap:6px;flex-wrap:wrap">
-    <input type="date" id="date-from" onchange="applyCustomPeriod()"
-      style="padding:5px 8px;border:1.5px solid var(--border);border-radius:var(--rs);
-        font-size:12px;font-family:'Sarabun',sans-serif;outline:none">
-    <span style="font-size:12px;color:var(--gray)">ถึง</span>
-    <input type="date" id="date-to" onchange="applyCustomPeriod()"
-      style="padding:5px 8px;border:1.5px solid var(--border);border-radius:var(--rs);
-        font-size:12px;font-family:'Sarabun',sans-serif;outline:none">
-  </div>
-  <span id="period-label" style="font-size:11px;color:var(--gray);margin-left:4px"></span>
-</div>
-
 <!-- UNIFIED FILTER BAR -->
 <div style="background:#fff;border-radius:var(--r);padding:10px 14px;margin-bottom:10px;
   box-shadow:var(--shadow)">
@@ -246,15 +217,6 @@ body{font-family:'Sarabun',sans-serif;background:#F0F4F8;color:#1A1A2E;min-heigh
         style="border-color:var(--teal)">T2 — 3 เดือน</button>
       <button class="date-btn" id="tbtn-T3" onclick="setTFilter('T3')"
         style="border-color:var(--green)">T3 — 6 เดือน</button>
-    </div>
-
-    <!-- ช่วงเวลา -->
-    <span style="font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;margin-left:8px">📅 ช่วงเวลา:</span>
-    <div style="display:flex;gap:4px;flex-wrap:wrap">
-      <button class="date-btn active" id="dbtn-all"  onclick="setDateRange('all')">ทั้งหมด</button>
-      <button class="date-btn" id="dbtn-1m"  onclick="setDateRange('1m')">1 เดือน</button>
-      <button class="date-btn" id="dbtn-3m"  onclick="setDateRange('3m')">3 เดือน</button>
-      <button class="date-btn" id="dbtn-6m"  onclick="setDateRange('6m')">6 เดือน</button>
     </div>
 
     <span id="filter-label" style="font-size:11px;color:var(--gray);margin-left:auto"></span>
@@ -429,11 +391,9 @@ body{font-family:'Sarabun',sans-serif;background:#F0F4F8;color:#1A1A2E;min-heigh
   <div class="card" style="padding:0;overflow:hidden">
     <div style="overflow-x:auto">
       <table class="tbl" id="person-tbl">
-        <thead><tr>
+        <thead><tr id="person-thead-row">
           <th>#</th><th>ชื่อ-สกุล</th><th>หน่วยงาน</th>
           <th>คะแนน</th><th>%</th><th>ผล</th>
-          <th>F1</th><th>F2</th><th>F3</th><th>F4</th>
-          <th>F5</th><th>F6</th><th>F7</th><th>F8</th>
         </tr></thead>
         <tbody id="person-tbody"></tbody>
       </table>
@@ -515,6 +475,9 @@ const ST_NAMES = ['Sterile Technique','Oral/Nasal Suction','Injection IM/ID/SC',
   'Blood Transfusion','IV Fluid/Drug','PIV Cannulation','Venipuncture','NGT Insertion','Dressing Skill (แผลขนาดเล็ก)'];
 const ST_SHORT = ['Sterile','Suction','Injection','Blood Tx','IV Fluid','PIV Cann','Venipunct','NGT','Dressing'];
 const ST_MAX   = [28,34,40,40,34,34,32,36,40];
+const ST_ICONS = ['🧤','👃','💉','🩸','💧','🔌','🧪','🍽️','🩹'];
+// 🧤 Sterile Technique · 👃 Oral/Nasal Suction · 💉 Injection · 🩸 Blood Transfusion
+// 💧 IV Fluid/Drug · 🔌 PIV Cannulation · 🧪 Venipuncture · 🍽️ NGT Insertion · 🩹 Dressing Skill
 const TOTAL_MAX = 312;
 
 const RECS = [
@@ -563,7 +526,6 @@ document.getElementById('pw-input').addEventListener('keydown',e=>{if(e.key==='E
 let allData=[];
 let filteredData=[];
 let currentT='all';   // 'all' | 'T0' | 'T1' | 'T2' | 'T3'
-let dateRange='all';  // 'all' | '1m' | '3m' | '6m'
 
 /* ── T filter ──────────────────────────────────────────────────── */
 const T_COLORS = { T0:'var(--gray)', T1:'var(--blue)', T2:'var(--teal)', T3:'var(--green)' };
@@ -583,49 +545,27 @@ function setTFilter(t) {
   applyAllFilters();
 }
 
-function setDateRange(range) {
-  dateRange = range;
-  document.querySelectorAll('[id^="dbtn-"]').forEach(b => b.classList.remove('active'));
-  const btn = document.getElementById('dbtn-' + range);
-  if (btn) btn.classList.add('active');
-  applyAllFilters();
-}
-
 function applyAllFilters() {
-  // 1. กรองตาม period (column "period" ใน Sheets)
+  // 1. กรองตาม period (column "ช่วงประเมิน" ใน Sheets)
   let data = allData;
   if (currentT !== 'all') {
     data = data.filter(d => {
-      const p = (d['period'] || d['ช่วงการประเมิน'] || '').toString().toUpperCase();
+      const p = (d['ช่วงประเมิน'] || d['period'] || '').toString().toUpperCase();
       return p.startsWith(currentT);
-    });
-  }
-
-  // 2. กรองตาม date range
-  if (dateRange !== 'all') {
-    const now = new Date();
-    const months = dateRange === '1m' ? 1 : dateRange === '3m' ? 3 : 6;
-    const from = new Date(now.getFullYear(), now.getMonth() - months, now.getDate());
-    data = data.filter(d => {
-      const ts = d['Timestamp'] || '';
-      if (!ts) return true;
-      try { const dt = new Date(ts); return !isNaN(dt) && dt >= from; }
-      catch { return true; }
     });
   }
 
   filteredData = data;
 
-  // 3. อัปเดต label
+  // 2. อัปเดต label
   const lbl = document.getElementById('filter-label');
   if (lbl) {
     const tLabel = currentT === 'all' ? '' : `[${currentT}] `;
-    const dtLabel = dateRange === 'all' ? '' : ` | ย้อนหลัง ${dateRange==='1m'?'1':dateRange==='3m'?'3':'6'} เดือน`;
     lbl.innerHTML = `<span style="color:${currentT==='all'?'var(--gray)':T_COLORS[currentT]};font-weight:700">
-      ${tLabel}</span>${filteredData.length} รายการ${dtLabel}`;
+      ${tLabel}</span>${filteredData.length} รายการ`;
   }
 
-  // 4. ปรับ metric card labels ตาม T
+  // 3. ปรับ metric card labels ตาม T
   updateMetricLabels();
   renderAll();
 }
@@ -733,32 +673,14 @@ function loadDemoData(){
   document.getElementById('last-update').textContent='🎯 ข้อมูลตัวอย่าง (Demo) | '+new Date().toLocaleString('th-TH');
 }
 
-/* ══ PERIOD FILTER ═════════════════════════════════════════════ */
-let activePeriod = '';
-
-function setPeriod(btn, period) {
-  activePeriod = period;
-  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const fd = getFilteredData();
-  const cnt = document.getElementById('period-count');
-  if (cnt) cnt.textContent = period ? `แสดง ${fd.length} รายการ (${period})` : `ทั้งหมด ${fd.length} รายการ`;
-  renderAll();
-}
-
 function getFilteredData() {
-  if (!activePeriod) return allData;
-  return allData.filter(d => (d['ช่วงประเมิน']||'').startsWith(activePeriod));
+  return filteredData;
 }
 
 /* ══ RENDER ALL ════════════════════════════════════════════════ */
 function renderAll(){
   populateFilters();
   const fd = getFilteredData();
-  const cnt = document.getElementById('period-count');
-  if (cnt) cnt.textContent = activePeriod
-    ? `แสดง ${fd.length} รายการ (${activePeriod})`
-    : `ทั้งหมด ${fd.length} รายการ`;
   renderOverview();renderDept();renderUnit();renderPerson();renderIDP();renderTracking();
 }
 
@@ -1060,7 +982,22 @@ function renderUnit(){
 }
 
 /* ══ PERSON ════════════════════════════════════════════════════ */
+function buildPersonTableHeader(){
+  const row = document.getElementById('person-thead-row');
+  if(!row || row.dataset.built) return;
+  ST_NAMES.forEach((name,i)=>{
+    const th=document.createElement('th');
+    th.textContent = ST_ICONS[i] || ('F'+(i+1));
+    th.title = name;
+    th.style.cursor='help';
+    th.style.textAlign='center';
+    row.appendChild(th);
+  });
+  row.dataset.built='1';
+}
+
 function renderPerson(){
+  buildPersonTableHeader();
   const search=document.getElementById('ps-search').value.toLowerCase();
   const unitF=document.getElementById('ps-unit').value;
   const resF=document.getElementById('ps-result').value;
@@ -1071,7 +1008,7 @@ function renderPerson(){
     return ms&&mu&&mr;
   });
   const tbody=document.getElementById('person-tbody');
-  if(!data.length){tbody.innerHTML='<tr><td colspan="14" style="text-align:center;padding:20px;color:var(--gray)">ไม่พบข้อมูล</td></tr>';return;}
+  if(!data.length){tbody.innerHTML='<tr><td colspan="15" style="text-align:center;padding:20px;color:var(--gray)">ไม่พบข้อมูล</td></tr>';return;}
   tbody.innerHTML=data.map((d,idx)=>{
     const pcts=getPcts(d);
     const overall=d['ผลสรุป']==='ผ่านทุกฐาน';
