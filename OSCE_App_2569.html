@@ -1297,27 +1297,30 @@ function renderDevelop() {
 
 /* ── SUBMIT TO SHEETS ────────────────────────────────────────────── */
 // ── ส่งข้อมูลไป Google Apps Script ──────────────────────────────────
-// ลองส่งแบบ fetch()+POST ก่อน (ดูเป็นคำขอปกติ ไม่ถูกตัวกรองความปลอดภัย/
-// Ad-blocker บล็อกง่ายเหมือน <img> tag ที่คล้าย tracking pixel) ถ้า fetch
-// ใช้ไม่ได้ (เบราว์เซอร์เก่ามาก) ค่อย fallback ไปใช้วิธี Image tag แบบเดิม
+// ส่งพร้อมกันทั้ง 2 วิธี (fetch POST + Image GET) เพื่อเพิ่มโอกาสที่อย่างน้อย
+// 1 วิธีจะไม่โดนตัวกรองความปลอดภัย/Ad-blocker ขององค์กรบล็อก — ทำไปพร้อมกัน
+// ไม่ต้องรอผลใครก่อน เพราะทั้งคู่เป็น fire-and-forget อ่าน response กลับไม่ได้อยู่แล้ว
 function sendToSheets(url, params, onDone) {
+  let called = false;
+  const finish = () => { if (!called) { called = true; onDone(); } };
+
+  // วิธีที่ 1: fetch POST (ดูเป็นคำขอปกติ)
   if (typeof fetch === 'function') {
     fetch(url, {
       method: 'POST',
       mode: 'no-cors',
       credentials: 'omit',
       body: params,
-    }).then(() => onDone()).catch(() => {
-      // fetch พังจริง (เช่น network error) — ลอง fallback เป็น Image tag
-      const img = new Image();
-      img.onload = img.onerror = onDone;
-      img.src = url + '?' + params.toString();
-    });
-  } else {
-    const img = new Image();
-    img.onload = img.onerror = onDone;
-    img.src = url + '?' + params.toString();
+    }).catch(() => {});
   }
+
+  // วิธีที่ 2: Image tag GET (สำรอง เผื่อวิธีแรกโดนบล็อกแบบเงียบๆ)
+  const img = new Image();
+  img.onload = img.onerror = finish;
+  img.src = url + '?' + params.toString();
+
+  // เผื่อทั้งคู่ไม่ยิง callback กลับมาเลยภายในเวลาอันควร ก็ยังให้ UI ทำงานต่อได้
+  setTimeout(finish, 3000);
 }
 
 function submitToSheets() {
