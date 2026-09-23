@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>OSCE 2569 — ฝ่ายการพยาบาล</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;min-height:100vh;
+  background:linear-gradient(145deg,#0D2137 0%,#1A3A5C 50%,#1A5C4A 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;color:#fff}
+.logo{font-size:52px;margin-bottom:12px;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.3))}
+.title{font-size:22px;font-weight:800;text-align:center;line-height:1.3;margin-bottom:6px}
+.sub{font-size:13px;opacity:.75;text-align:center;margin-bottom:32px;line-height:1.6}
+.card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px;padding:28px 24px;width:100%;max-width:360px;
+  backdrop-filter:blur(12px)}
+.btn{display:flex;align-items:center;gap:14px;padding:16px 20px;
+  border-radius:12px;border:none;cursor:pointer;width:100%;margin-bottom:12px;
+  font-family:'Sarabun',sans-serif;font-size:15px;font-weight:700;
+  text-decoration:none;transition:all .2s;text-align:left}
+.btn:last-child{margin-bottom:0}
+.btn-app{background:linear-gradient(135deg,#2C5F8A,#1A3A5C);color:#fff;
+  box-shadow:0 4px 16px rgba(26,58,92,0.4)}
+.btn-dash{background:linear-gradient(135deg,#1A6A40,#0D4028);color:#fff;
+  box-shadow:0 4px 16px rgba(26,106,64,0.4)}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.btn:active{transform:translateY(0)}
+.btn-icon{font-size:26px;flex-shrink:0}
+.btn-text-main{font-size:15px;font-weight:700;display:block}
+.btn-text-sub{font-size:11px;opacity:.8;font-weight:400;display:block;margin-top:2px}
+.divider{border:none;border-top:1px solid rgba(255,255,255,0.1);margin:16px 0}
+.version{font-size:11px;opacity:.45;text-align:center;margin-top:20px}
+.badge{display:inline-block;background:rgba(255,255,255,0.15);
+  padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="logo">🏥</div>
+<div class="title">ระบบประเมินสมรรถนะพยาบาลใหม่</div>
+<div class="sub">
+  ฝ่ายการพยาบาล รพ.รามาธิบดีจักรีนฤบดินทร์<br>
+  คณะแพทยศาสตร์ รพ.รามาธิบดี มหาวิทยาลัยมหิดล
+  <div><span class="badge">ปีงบประมาณ 2569</span></div>
+</div>
+
+<div class="card">
+
+  <!-- OSCE App -->
+  <a class="btn btn-app" href="OSCE_App_2569.html">
+    <div class="btn-icon">📝</div>
+    <div>
+      <span class="btn-text-main">OSCE ประเมินสมรรถนะ</span>
+      <span class="btn-text-sub">สำหรับผู้ประเมิน — 8 ฐาน T0/T1/T2/T3</span>
+    </div>
+  </a>
+
+  <hr class="divider">
+
+  <!-- Dashboard -->
+  <a class="btn btn-dash" href="OSCE_Dashboard_2569.html">
+    <div class="btn-icon">📊</div>
+    <div>
+      <span class="btn-text-main">Dashboard ผู้บริหาร</span>
+      <span class="btn-text-sub">วิเคราะห์ผล • รายงาน • IDP • ติดตามผล</span>
+    </div>
+  </a>
+
+</div>
+
+<div class="version">
+  เวอร์ชันนี้ฝัง URL Google Apps Script แล้ว ไม่ต้องกรอกลิงก์ซ้ำ<br>
+  © 2569 ฝ่ายการพยาบาล รพ.รามาธิบดีจักรีนฤบดินทร์
+</div>
+
+</body>
+</html>
