@@ -1297,27 +1297,25 @@ function renderDevelop() {
 
 /* ── SUBMIT TO SHEETS ────────────────────────────────────────────── */
 // ── ส่งข้อมูลไป Google Apps Script ──────────────────────────────────
-// ส่งพร้อมกันทั้ง 2 วิธี (fetch POST + Image GET) เพื่อเพิ่มโอกาสที่อย่างน้อย
-// 1 วิธีจะไม่โดนตัวกรองความปลอดภัย/Ad-blocker ขององค์กรบล็อก — ทำไปพร้อมกัน
-// ไม่ต้องรอผลใครก่อน เพราะทั้งคู่เป็น fire-and-forget อ่าน response กลับไม่ได้อยู่แล้ว
+// สำคัญ: Apps Script Web App ตอบกลับด้วย 302 redirect เสมอ ซึ่งเบราว์เซอร์มักทิ้ง
+// body ของคำขอ POST ระหว่าง redirect (ข้อมูลหาย) — จึงต้องส่งผ่าน query string
+// (เหมือน Image tag เดิม) เท่านั้น ไม่ใช่ POST body แต่เปลี่ยนมาใช้ fetch() แทน
+// <img> เพื่อไม่ให้มีรูปแบบเหมือน tracking pixel ที่ตัวกรองความปลอดภัยบล็อกง่าย
+// ส่งพร้อมกันทั้ง fetch และ Image tag เพื่อเพิ่มโอกาสให้อย่างน้อย 1 ทางผ่านได้
 function sendToSheets(url, params, onDone) {
   let called = false;
   const finish = () => { if (!called) { called = true; onDone(); } };
+  const fullUrl = url + '?' + params.toString();
 
-  // วิธีที่ 1: fetch POST (ดูเป็นคำขอปกติ)
+  // วิธีที่ 1: fetch GET (query string เหมือน Image tag แต่ไม่ใช่ <img>)
   if (typeof fetch === 'function') {
-    fetch(url, {
-      method: 'POST',
-      mode: 'no-cors',
-      credentials: 'omit',
-      body: params,
-    }).catch(() => {});
+    fetch(fullUrl, { method: 'GET', mode: 'no-cors', credentials: 'omit' }).catch(() => {});
   }
 
   // วิธีที่ 2: Image tag GET (สำรอง เผื่อวิธีแรกโดนบล็อกแบบเงียบๆ)
   const img = new Image();
   img.onload = img.onerror = finish;
-  img.src = url + '?' + params.toString();
+  img.src = fullUrl;
 
   // เผื่อทั้งคู่ไม่ยิง callback กลับมาเลยภายในเวลาอันควร ก็ยังให้ UI ทำงานต่อได้
   setTimeout(finish, 3000);
